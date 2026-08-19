@@ -48,7 +48,7 @@ pkg install python git nano tmux -y
 Clone your repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/telegram-groq-ai-bot.git
+git clone https://github.com/pabel172/telegram-groq-ai-bot.git
 cd telegram-groq-ai-bot
 ```
 
