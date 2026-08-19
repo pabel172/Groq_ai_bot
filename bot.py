@@ -20,7 +20,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 ADMIN_ID_RAW = os.getenv("ADMIN_ID", "").strip()
-MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b").strip()
+MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile").strip()
 SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT",
     "You are a helpful, friendly and intelligent AI assistant. Answer clearly and accurately. "
@@ -53,6 +53,9 @@ user_requests = defaultdict(deque)
 
 
 def get_db():
+    db_dir = os.path.dirname(DATABASE)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
     conn = sqlite3.connect(DATABASE, timeout=30)
     conn.row_factory = sqlite3.Row
     return conn
@@ -479,8 +482,21 @@ def main():
     )
     application.add_error_handler(error_handler)
 
-    logger.info("Bot is running.")
-    application.run_polling(drop_pending_updates=True)
+    webhook_url = os.getenv("WEBHOOK_URL", "").strip()
+    port = int(os.getenv("PORT", "8080"))
+    listen_address = os.getenv("LISTEN_ADDRESS", "0.0.0.0").strip()
+
+    if webhook_url:
+        logger.info("Bot is running in webhook mode on port %d...", port)
+        application.run_webhook(
+            listen=listen_address,
+            port=port,
+            webhook_url=webhook_url,
+            drop_pending_updates=True,
+        )
+    else:
+        logger.info("Bot is running in polling mode.")
+        application.run_polling(drop_pending_updates=True)
 
 
 if __name__ == "__main__":
