@@ -1,0 +1,38 @@
+name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: cloudflare
+          secrets: |
+            BOT_TOKEN
+            GROQ_API_KEY
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+      - name: Set Telegram Webhook
+        if: success()
+        run: |
+          WORKER_URL="https://telegram-groq-ai-bot.${{ secrets.CLOUDFLARE_SUBDOMAIN }}.workers.dev"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/setWebhook?url=${WORKER_URL}"

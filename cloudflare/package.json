@@ -1,0 +1,12 @@
+{
+  "name": "telegram-groq-ai-bot-cloudflare",
+  "version": "1.0.0",
+  "description": "Telegram Groq AI Bot on Cloudflare Workers",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
