@@ -49,7 +49,7 @@ Clone your repository:
 
 ```bash
 git clone https://github.com/pabel172/Groq_ai_bot
-cd telegram-groq-ai-bot
+cd Groq_ai_bot
 ```
 
 Create and activate a virtual environment:
